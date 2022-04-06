@@ -1,3 +1,7 @@
+# folders that should not be uploaded to git, but folders each person running this repository should have
+rand_100/
+rand_files/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
