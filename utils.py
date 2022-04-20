@@ -118,6 +118,17 @@ def read_h5j(h5j_path):
     return channels
 
 
+def generate_surrounding_coordinates(coord):
+    return [[coord[0] + 1, coord[1] + 1],
+            [coord[0] + 1, coord[1]],
+            [coord[0], coord[1] + 1],
+            [coord[0] - 1, coord[1] - 1],
+            [coord[0], coord[1] - 1],
+            [coord[0] - 1, coord[1]],
+            [coord[0] - 1, coord[1] + 1],
+            [coord[0] + 1, coord[1] - 1],
+            ]
+
 if __name__ == '__main__':
     np.random.seed(1)
     rand_choices = random_choice(100, "folder_names.txt")
