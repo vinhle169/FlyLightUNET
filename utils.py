@@ -117,17 +117,91 @@ def read_h5j(h5j_path):
 
     return channels
 
+def edge_checker(img, coordinate):
+    '''
+    :param img:
+    :param coordinate: tuple(x,y)
+    :return: type of edge
+    '''
+    max_x, max_y = img.shape[0:2]
+    if coordinate[0] == max_x and coordinate[1] == max_y:
+        return 'bottom right'
+    elif coordinate[0] == 0 and coordinate[1] == 0:
+        return 'top left'
+    elif coordinate[0] == max_x and coordinate[1] == 0:
+        return 'top right'
+    elif coordinate[0] == 0 and coordinate[1] == max_y:
+        return 'bottom left'
+    elif coordinate[0] == max_x:
+        return 'right'
+    elif coordinate[0] == max_y:
+        return 'bottom'
+    elif coordinate[0] == 0:
+        return 'left'
+    elif coordinate[0] == 0:
+        return 'top'
+    return None
 
-def generate_surrounding_coordinates(coord):
-    return [[coord[0] + 1, coord[1] + 1],
+def generate_surrounding_coordinates(coord, is_edge=None):
+    coords = np.array(
+            [[coord[0] + 1, coord[1] + 1],
             [coord[0] + 1, coord[1]],
             [coord[0], coord[1] + 1],
             [coord[0] - 1, coord[1] - 1],
             [coord[0], coord[1] - 1],
             [coord[0] - 1, coord[1]],
             [coord[0] - 1, coord[1] + 1],
-            [coord[0] + 1, coord[1] - 1],
-            ]
+            [coord[0] + 1, coord[1] - 1]])
+    if is_edge:
+        if is_edge == 'top right':
+            coords = np.array([
+                    [coord[0] - 1, coord[1] + 1],
+                    [coord[0], coord[1] + 1],
+                    [coord[0] - 1, coord[1]]])
+        elif is_edge == 'top left':
+            coords = np.array(
+                [[coord[0] + 1, coord[1] + 1],
+                [coord[0], coord[1] + 1],
+                [coord[0] + 1, coord[1]]])
+        elif is_edge == 'bottom left':
+            coords = np.array(
+                [[coord[0] + 1, coord[1]],
+                 [coord[0], coord[1] - 1],
+                 [coord[0] + 1, coord[1] - 1]])
+        elif is_edge == 'bottom right':
+            coords = np.array(
+                [[coord[0] - 1, coord[1]],
+                    [coord[0], coord[1] - 1],
+                    [coord[0] - 1, coord[1] - 1]])
+        elif is_edge == 'top':
+            coords = np.array(
+                [[coord[0] + 1, coord[1]],
+                 [coord[0] - 1, coord[1] - 1],
+                 [coord[0], coord[1] - 1],
+                 [coord[0] - 1, coord[1]],
+                 [coord[0] + 1, coord[1] - 1]])
+        elif is_edge == 'bottom':
+            coords = np.array(
+                [[coord[0] + 1, coord[1] + 1],
+                 [coord[0] + 1, coord[1]],
+                 [coord[0], coord[1] + 1],
+                 [coord[0] - 1, coord[1]],
+                 [coord[0] - 1, coord[1] + 1]])
+        elif is_edge == 'left':
+            coords = np.array(
+                [[coord[0] + 1, coord[1] + 1],
+                 [coord[0] + 1, coord[1]],
+                 [coord[0], coord[1] + 1],
+                 [coord[0], coord[1] - 1],
+                 [coord[0] + 1, coord[1] - 1]])
+        elif is_edge == 'right':
+            coords = np.array(
+                [[coord[0], coord[1] + 1],
+                 [coord[0] - 1, coord[1] - 1],
+                 [coord[0], coord[1] - 1],
+                 [coord[0] - 1, coord[1]],
+                 [coord[0] - 1, coord[1] + 1]])
+    return coords
 
 if __name__ == '__main__':
     np.random.seed(1)
