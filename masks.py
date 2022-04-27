@@ -117,41 +117,48 @@ def determine_boundary(img):
     return blank
 
 
+def edge_detectors(img, edge_detector):
+    # grab just the hue channel
+    img = img[:,:,0]
+    edges = edge_detector(img)
+    return edges
+
+
 if __name__ == "__main__":
     # img = cv2.imread('flylight_logo.png')
     desired_width = 320
     np.set_printoptions(linewidth=desired_width)
     # full test image: R10A12-20180828_61_E6-f-40x-vnc-GAL4-unaligned_stack.h5j
-    path = 'rand_100/R10A12-20180828_61_E6-f-40x-vnc-GAL4-unaligned_stack.h5j'
-    stack = read_h5j(path)
-    images = [image[..., :-1] for image in stack]
-    images = np.array(images)
-    img = np.amax(images, axis=0)
-    print(img.shape)
+    # path = 'rand_100/R10A12-20180828_61_E6-f-40x-vnc-GAL4-unaligned_stack.h5j'
+    # stack = read_h5j(path)
+    # images = [image[..., :-1] for image in stack]
+    # images = np.array(images)
+    # img = np.amax(images, axis=0)
+    img = np.load('R10A12-20180828_61_E6-f-40x-vnc-GAL4-unaligned_stack.npy')
     # img = cv2.imread('test_image.png')
     # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     # img = img[200:220, 115:135, :] # test_1
     # img = img[140:160, 100:120, :] # test_2
     # print(img[15,19,:]) # part of test 2
+
+    # convert to foreground and background
     masked_image = greyscale_otsu_threshold(img)
-    plt.imshow(masked_image)
-    plt.savefig('results/fullimage_test_otsu.png')
-    plt.close()
     # convert foreground to hsv and run edge detector on hue channel
     # otsu threshold -> foreground -> convert to hsv -> run edge detector on hue channel -> otsu output
+    masked_image = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+    edges = edge_detectors(masked_image, filters.sobel)
     # try on actual images
     # try various scikit image edge detectors
-    image_match = matching_pursuit(masked_image)
+    # image_match = matching_pursuit(masked_image)
 
-    plt.imshow(image_match)
-    plt.savefig('results/fullimage_test_matching.png')
+    plt.imshow(edges)
 
-    boundaries = determine_boundary(image_match)
-    boundaries = np.array(boundaries) * 100
-
-    plt.imshow(boundaries)
-    plt.savefig('results/fullimage_test_boundary.png')
-    plt.show()
+    # boundaries = determine_boundary(image_match)
+    # boundaries = np.array(boundaries) * 100
+    #
+    # plt.imshow(boundaries)
+    plt.savefig('results/fullimage_test_sobel.png')
+    # plt.show()
     # fig, axs = plt.subplots(1,2)
     # axs[0].imshow(masked_image)
     # axs[0].title.set_text('Post Otsu Image')
